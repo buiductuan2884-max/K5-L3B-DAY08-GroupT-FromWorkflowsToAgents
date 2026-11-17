@@ -127,3 +127,28 @@ Sao chép mục dưới đây cho từng thành viên.
 - `python -m lab8.check_submission`: `shape single: format đúng, 12/12 claim public pass ở seed 11`.
 - Tự kiểm hidden `python -m lab8.benchmark --shapes single --cases student_drop/hidden_claims.jsonl --world student_drop/hidden_world_state.json`: 200 trial, 0 error, 0 `leak_suspect`, status trùng workflow và orchestrator ở mọi cặp (claim, seed).
 - Chi tiết: `report/team/2A202603847_NguyenLeDangKhoa.md`.
+
+## 2A202603722_MaiXuanKhang
+
+### Phần việc phụ trách
+
+- P4 — Ledger, safety testing, evaluation và báo cáo.
+- Kiểm thử idempotency, retry/crash, approval, trace/privacy và handoff.
+- Chạy benchmark bốn kiến trúc, crash suite và hoàn thiện research card, phần P4 trong báo cáo nhóm, báo cáo cá nhân.
+
+### Đóng góp cụ thể
+
+- Thêm `src/tests/test_trace_safety_group.py` với 134 case: 42 test độc lập và 92 test tích hợp. Dùng SQLite thật, `tmp_path`; không thay logic refund/approval bằng mock.
+- Kiểm đúng một refund và audit, retry không ghi trùng, amount conflict giữ tiền cũ, ba cửa sổ crash/resume, approval thiếu/hết hạn/thu hồi/sai claim, trần theo order và T13/T14.
+- Kiểm trace đúng contract, phát hiện missing/stale/invalid/mismatch, quét sibling `<run_id>*`, secret/PII và stdout/stderr; đối chiếu handoff với allowlist của host.
+- Bổ sung test hồi quy và sửa xử lý order ID toàn khoảng trắng để trả `needs_info`; giữ nguyên mã đơn có padding hoặc ký tự giống nhau khi lookup.
+- Sinh `src/reports/benchmark.json` và `src/reports/crash.json` bằng lệnh lab; lập research card R2 và báo cáo dựa trên số liệu thực tế, không sửa JSON thủ công hoặc thước đo.
+
+### Bằng chứng
+
+- Commit kỹ thuật: `21768c5`; commit báo cáo và bằng chứng: `d5a8733`.
+- `python -m pytest -q tests/test_trace_safety_group.py -o addopts=`: 134 passed.
+- `python -m pytest -q`: 139 passed; `python -m pytest -q -m student -o addopts=`: 340 passed trên revision đánh giá `21768c5`.
+- `src/reports/crash.json`: `crash_safety = 20/20`. Kiểm thử P4 bổ sung crash/resume riêng cho ba shape nhóm.
+- `src/reports/benchmark.json`: 4 shape × 14 public claim × seeds `11,22,33,44,55` = 280 trial; mỗi trial dùng SQLite mới. Run ID đối chiếu: `R-workflow-C-001-s11`, `R-swarm-C-002-s55`.
+- Chi tiết đóng góp và giới hạn: [báo cáo cá nhân P4](report/team/2A202603722_MaiXuanKhang.md).
