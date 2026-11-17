@@ -54,12 +54,13 @@ Sao chép mục dưới đây cho từng thành viên.
 - Cài orchestrator theo luồng: đọc claim, kiểm `order_id`, dựng handoff, chạy investigator chỉ có tool đọc, lấy quote từ `compute_compensation`, rồi gọi `durability.issue_refund` với quote đầy đủ.
 - Handoff dùng `make_handoff` (allowlist, tool chỉ đọc). Trace chỉ ghi handoff đã sanitize và vài field chọn lọc, không ghi ticket, claim row, order row hay secret.
 - Truyền `crash_at` xuống host và không nuốt `InjectedCrash`, nên crash rồi resume vẫn còn một refund và một audit `refund_committed`.
-- Thêm 16 test: không lộ secret hoặc PII, handoff chỉ có field allowlist, ticket nói dối vẫn bị `denied` trên 5 seed, T14 ghi 120.000, crash rồi resume.
+- Coi `order_id` toàn khoảng trắng là thiếu mã đơn: trả `needs_info` thay vì `escalated`, thống nhất với shape workflow và single.
+- Thêm 26 test (đã tính các case tham số hóa): không lộ secret hoặc PII, handoff chỉ có field allowlist, ticket nói dối vẫn bị `denied` trên 5 seed, T14 ghi 120.000, crash rồi resume, `order_id` trống.
 
 ### Bằng chứng
 
 - Commit: ada63e5
 - `python -m pytest -q -m student -o addopts= -k orchestrator`: 62 passed.
-- `python -m pytest -q tests/test_orchestrator_group.py`: 16 passed.
-- `python -m pytest -q`: 75 passed.
+- `python -m pytest -q tests/test_orchestrator_group.py`: 26 passed.
+- `python -m pytest -q`: 107 passed.
 - Chi tiết: `report/team/2A20260388_LeQuanBao.md`.
