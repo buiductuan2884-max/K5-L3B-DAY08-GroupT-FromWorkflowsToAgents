@@ -26,6 +26,7 @@ P1: nhóm trưởng, shape A `workflow` và bonus.
 - `5c338b9`, `16e2e22`: bonus B7 và báo cáo bonus.
 - `5bfb01b`: bản thử bonus B6.
 - `161f109`: hoàn thiện `TEAM.md`; đây là commit ghi trong ADR.
+- `d606089`: merge PR #5, gộp nhánh `integrate` (bài của cả 4 người) vào `main`; đây là commit chốt trong `TEAM.md`.
 
 **Cách chia việc**
 
@@ -85,7 +86,7 @@ P1: nhóm trưởng, shape A `workflow` và bonus.
 **Làm được**
 
 - Workflow qua 62/62 test student và 20/20 tình huống kiểu hidden. Chi phí thấp nhất trong 4 shape.
-- Cả nhóm làm song song gần như không phải chờ nhau, vì mỗi người giữ file riêng. Lần xung đột duy nhất là P3 và P4 cùng sửa một dòng trong `orchestrator.py` với cùng nội dung; tôi giữ bản của P3 vì P3 là chủ file.
+- Cả nhóm làm song song gần như không phải chờ nhau, vì mỗi người giữ file riêng. Chỉ có 2 lần xung đột. P3 và P4 cùng sửa một dòng trong `orchestrator.py` với cùng nội dung, tôi giữ bản của P3 vì P3 là chủ file. Bảng đóng góp trong `TEAM.md` bị sửa song song với P2, tôi giữ bảng đủ 4 người và mục cá nhân P2 tự viết.
 - B7 tìm ra lỗi ở cả 3 bản grader và một lỗi trong chính thước đo gốc.
 
 **Hạn chế và điều chưa kiểm chứng**
