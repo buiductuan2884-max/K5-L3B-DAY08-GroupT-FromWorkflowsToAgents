@@ -56,7 +56,7 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Bằng chứng
 
-- Commit: (điền hash sau khi commit)
+- Commit: ada63e5
 - `python -m pytest -q -m student -o addopts= -k orchestrator`: 62 passed.
 - `python -m pytest -q tests/test_orchestrator_group.py`: 16 passed.
 - `python -m pytest -q`: 75 passed.

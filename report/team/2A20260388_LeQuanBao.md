@@ -55,7 +55,7 @@ Mọi nhánh return đi qua một hàm `done()` duy nhất. Hàm này ghi event 
 - T14 ghi đúng 120.000 và `proposal_amount` giữ 150.000.
 - Crash ở `after_effect_before_checkpoint` rồi resume còn đúng một dòng ledger và một audit `refund_committed`.
 
-Commit chính: (điền hash sau khi commit, lấy bằng `git rev-parse --short HEAD`)
+Commit chính: ada63e5
 
 ## 4. Bằng chứng
 
