@@ -9,6 +9,16 @@ import pytest
 pytestmark = pytest.mark.student
 
 
+@pytest.fixture(autouse=True)
+def preserve_shape_registry():
+    """Lab 9 variants are process-local; leave Lab 8's registry contract intact."""
+    from lab8.shapes import SHAPES
+    original = dict(SHAPES)
+    yield
+    SHAPES.clear()
+    SHAPES.update(original)
+
+
 def test_trace_first_error_and_fixed():
     from lab9.trace_case import investigate
     from lab9.graders import RefundAmountCorrect
