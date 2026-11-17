@@ -108,3 +108,40 @@ def test_crash_fires_then_resume_keeps_one_refund(tmp_path):
     assert result.status == "resolved"
     assert rows == 1
     assert audits == 1
+
+
+def _with_order_id(tmp_path: Path, claim_id: str, order_id: str | None) -> str:
+    claims = [dict(c, order_id=order_id) if c["claim_id"] == claim_id else c for c in CLAIMS]
+    return _store(tmp_path, claims)
+
+
+@pytest.mark.parametrize("blank", [" " * 3, chr(9), chr(10), " " + chr(9) + chr(10) + " "])
+@pytest.mark.parametrize("seed", [11, 55])
+def test_blank_order_id_is_needs_info_not_escalated(tmp_path, blank, seed):
+    store = _with_order_id(tmp_path, "C-001", blank)
+    result = run_claim("C-001", seed=seed, store_path=store)
+    kinds = [e["kind"] for e in _trace(result)["events"]]
+    conn = connect(store)
+    try:
+        rows = conn.execute("SELECT COUNT(*) FROM refund_ledger WHERE claim_id = 'C-001'").fetchone()[0]
+    finally:
+        conn.close()
+    assert result.status == "needs_info"
+    assert result.error_reason == "missing_order_id"
+    assert result.proposal_amount == 0
+    assert result.refund_effects == []
+    assert rows == 0
+    assert "handoff" not in kinds
+
+
+def test_padded_order_id_still_escalates(tmp_path):
+    """Only a blank id is missing. A padded real id is looked up raw, so it is unknown."""
+    result = run_claim("C-001", seed=11, store_path=_with_order_id(tmp_path, "C-001", " O-107 "))
+    assert result.status == "escalated"
+    assert result.refund_effects == []
+
+
+def test_real_order_id_is_unaffected_by_the_blank_check(tmp_path):
+    result = run_claim("C-001", seed=11, store_path=_with_order_id(tmp_path, "C-001", "O-107"))
+    assert result.status == "resolved"
+    assert result.proposal_amount == 35000
