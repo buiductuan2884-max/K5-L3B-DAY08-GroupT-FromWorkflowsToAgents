@@ -1,0 +1,88 @@
+{
+  "shape": "workflow",
+  "how_expected_was_computed": "By hand from docs/metrics.md. Graded = 4 (infra row K3 excluded). Successes 3 -> pass_rate 3/4. Seed rates: s11 = 1/2, s22 = 2/2; population variance = ((0.5-0.75)^2 + (1-0.75)^2)/2 = 0.0625. pass_5: K1 passes on both seeds, K2 does not -> 1/2. Cost over graded trials = 10+10+20+20 = 60 -> per success 60/3 = 20. Steps [2,4,6,8]: mean 5, p95 index ceil(0.95*4)-1 = 3 -> 8.",
+  "trials": [
+    {
+      "shape": "workflow",
+      "claim_id": "K1",
+      "seed": 11,
+      "passed": true,
+      "cost_estimate": 10.0,
+      "steps": 2,
+      "model_calls": 0,
+      "tool_calls": 3,
+      "reason": "ok",
+      "infra_error": false
+    },
+    {
+      "shape": "workflow",
+      "claim_id": "K1",
+      "seed": 22,
+      "passed": true,
+      "cost_estimate": 10.0,
+      "steps": 4,
+      "model_calls": 0,
+      "tool_calls": 3,
+      "reason": "ok",
+      "infra_error": false
+    },
+    {
+      "shape": "workflow",
+      "claim_id": "K2",
+      "seed": 11,
+      "passed": false,
+      "cost_estimate": 20.0,
+      "steps": 6,
+      "model_calls": 0,
+      "tool_calls": 3,
+      "reason": "status",
+      "infra_error": false
+    },
+    {
+      "shape": "workflow",
+      "claim_id": "K2",
+      "seed": 22,
+      "passed": true,
+      "cost_estimate": 20.0,
+      "steps": 8,
+      "model_calls": 0,
+      "tool_calls": 3,
+      "reason": "ok",
+      "infra_error": false
+    },
+    {
+      "shape": "workflow",
+      "claim_id": "K3",
+      "seed": 11,
+      "passed": false,
+      "cost_estimate": 5.0,
+      "steps": 1,
+      "model_calls": 0,
+      "tool_calls": 1,
+      "reason": "timeout",
+      "infra_error": true
+    }
+  ],
+  "expected": {
+    "graded_trials": 4,
+    "successes": 3,
+    "pass_rate": 0.75,
+    "seed_pass_rates": {
+      "11": 0.5,
+      "22": 1.0
+    },
+    "seed_variance": 0.0625,
+    "seed_min": 0.5,
+    "seed_max": 1.0,
+    "pass_5": 0.5,
+    "total_simulated_cost_vnd": 60.0,
+    "cost_per_success_vnd": 20.0,
+    "mean_steps": 5.0,
+    "p95_steps": 8.0
+  },
+  "interpretation_choices": [
+    "Cost: docs/metrics.md says 'tong cost mo phong cua moi trial, ke ca trial fail'. We read an infra trial as not graded, so its cost (5) is left out: 60, not 65. Reading 'moi trial' literally gives 65 and 65/3 = 21.67.",
+    "pass_5 denominator: K3 appears only as an infra trial. We leave it out of the claims, so 1/2, not 1/3.",
+    "Both choices follow the README relation 'infra trials are not decisions of the shape'. grader_c's cost and pass_5 entries in this oracle depend on these choices; its pass_rate entry does not."
+  ]
+}
