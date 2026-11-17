@@ -81,10 +81,11 @@ def _run(conn: sqlite3.Connection, claim_id: str, *, seed: int, crash_at: str | 
     claim = get_claim_view(conn, claim_id)
     if not claim["found"]:
         return done("failed", reason="unknown_claim")
-    trace.add("claim", {"claim_id": claim_id, "has_order_id": bool(claim["order_id"])})
+    has_order_id = bool((claim["order_id"] or "").strip())
+    trace.add("claim", {"claim_id": claim_id, "has_order_id": has_order_id})
 
     # 2. No order id on the claim row -> ask. Never take an order id from the ticket.
-    if not claim["order_id"]:
+    if not has_order_id:
         return done("needs_info", reason="missing_order_id")
 
     # 3. Handoff: allowlist only, read-only tools. No parent secret, headers, or claim row.
