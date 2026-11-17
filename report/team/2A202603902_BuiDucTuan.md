@@ -55,7 +55,7 @@ P1: nhóm trưởng, shape A `workflow` và bonus.
 
 | Lệnh (trong `src/`) | Kết quả |
 | --- | --- |
-| `python -m pytest -q -m student -o addopts= -k workflow` | 62 passed |
+| `python -m pytest -q -m student -o addopts= -k workflow tests/test_public_matrix.py` | 62 passed |
 | `python -m pytest -q` (sau khi gộp mọi nhánh) | 200 passed |
 | `python -m pytest -q -m student -o addopts=` | 340 passed |
 | `python -m pytest -q tests/test_bonus_grader_audit.py` | 40 passed |
