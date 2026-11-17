@@ -21,13 +21,11 @@ Kiểm chứng ledger/idempotency, approval/policy, trace/privacy và handoff; c
 - Handoff: đối chiếu trực tiếp `ALLOWED_FIELDS`, `FACT_KEYS`, `READONLY_TOOLS`; worker không nhận/call tool ghi. Kiểm payload handoff thật của orchestrator/swarm thay vì tự đặt allowlist.
 - Regression: orchestrator coi `None`, chuỗi rỗng, dấu cách, tab, NBSP là thiếu order → `needs_info`, không handoff/ledger. ID có padding/ký tự giống vẫn giữ nguyên để lookup và `escalated`, không normalize thành đơn hợp lệ.
 - Dùng lệnh lab sinh `benchmark.json`, `crash.json`; không chỉnh JSON thủ công. Viết research card R2 với nguồn MAST chính thức và so sánh A/D có chỉ rõ confounder; hoàn thiện báo cáo nhóm theo mẫu và bảng đóng góp trong TEAM bằng commit/test có thật.
-- Đối chiếu kết quả kiểm toán B7 của P1 với bộ benchmark chính; ghi riêng revision và kết quả bonus để không cộng gộp test hay thay đổi metric giữa hai bộ dữ liệu.
 
 ## 4. Bằng chứng
 
 - Commit kỹ thuật: **`21768c53415405fe43f56a46adc8d34406e49faa`**, thông điệp `[P4] Add ledger and trace safety tests; fix blank order ID regression`.
 - Commit báo cáo và bằng chứng: **`d5a8733d256493e11b8eb883a196aaaf2fdc2035`**.
-- Base nhóm: `c2eba6a1f319cf175b135acaca5e6008b8ee21aa`, đã tích hợp P1/P2/P3.
 - Test tiêu biểu: `test_host_crash_durable_state_survives_connection_reopen`, `test_conflicting_retries_preserve_effect_checkpoint_and_committed_audit`, `test_approval_gate_denies_positive_quote_and_retry_without_effect`, `test_reference_writes_current_trace_on_all_public_branches`, `test_trace_validator_rejects_corrupted_real_run`, `test_student_positive_quote_reaches_host_denial`, `test_blank_order_id_needs_info_before_handoff`.
 
 Các lệnh sau đã chạy trong `src/`, dùng Python 3.13.18 của `.venv`:
@@ -41,9 +39,8 @@ Các lệnh sau đã chạy trong `src/`, dùng Python 3.13.18 của `.venv`:
 | `python -m pytest -q tests/test_trace_safety_group.py -o addopts=` | 134 passed, không deselected/skipped/failed |
 | `python -m pytest -q -m student -o addopts=` | 340 passed, 139 deselected; gồm 248 matrix gốc + 92 P4 tích hợp |
 | `python -m lab8.crash_test --count 20 --out reports/crash.json` | 20/20 scenario passed |
-| `python -m lab8.check_submission` | Còn 1 file chưa hoàn thiện: ADR, với 7 FAIL theo từng trường; các mục shapes, reports, TEAM và research card hợp lệ |
 
-Trước sửa regression: lọc `-k blank_order_id` có 3 failed/18 passed; ba lỗi là spaces, tab và NBSP của orchestrator trả `escalated` thay vì `needs_info`. Sau sửa, cả 92 test tích hợp P4 PASS, bao gồm các test regression và kiểm tra mã đơn không bị normalize.
+Test hồi quy kiểm spaces, tab và NBSP phải trả `needs_info`, không handoff/refund; mã đơn có padding hoặc ký tự giống nhau vẫn được lookup nguyên dạng. Các tình huống này nằm trong 92 test tích hợp P4 đã PASS.
 
 Lệnh tạo benchmark:
 
@@ -54,8 +51,6 @@ python -m lab8.benchmark --shapes workflow,single,orchestrator,swarm --cases dat
 Nguồn [benchmark.json](../../src/reports/benchmark.json): 280 trial, mỗi shape 70, SQLite mới/trial. Workflow/single/orchestrator lần lượt pass 70/70, pass^5 1, variance 0; cost/success mô phỏng 27.857142857 / 32.987142857 / 56.72 VND. Swarm pass 69/70, pass^5 13/14, variance 0.000816326531, cost/success 49.566956522 VND. Trial fail `R-swarm-C-002-s55`; cặp ablation `R-workflow-C-002-s55` / `R-swarm-C-002-s55`. [crash.json](../../src/reports/crash.json) là 20/20 của host/reference; kết quả crash từng shape nhóm được chứng minh riêng bằng test P4, không gán nhầm từ suite này.
 
 Chưa có kết quả hidden để đối chiếu. Mọi số liệu là public/test mutation; latency `unavailable`. Báo cáo nhóm và research card dẫn tới cùng JSON, cùng commit kỹ thuật.
-
-Đối chiếu bổ sung: `python -m pytest -q tests/test_bonus_grader_audit.py` đã chạy riêng trên revision B7 của P1 `16e2e22` và đạt **40 PASS**. [JSON kiểm toán](https://github.com/buiductuan2884-max/K5-L3B-DAY08-GroupT-FromWorkflowsToAgents/blob/16e2e22/src/reports/bonus_grader_audit.json) cho thấy grader_a có cost phụ thuộc thứ tự, grader_c đổi pass rate 0.75 → 0.5625 khi thêm trial hạ tầng, và pass^5 của logic dùng chung đổi 0.666667 → 0 khi nhân đôi trial. Benchmark chính có đúng 280 bộ (shape, claim, seed) phân biệt và không chứa `infra_error`, nên vẫn giữ số liệu gốc. Triển khai và test B7 thuộc P1; đóng góp P4 là kiểm tra, đối chiếu và đồng bộ báo cáo. Kết quả 40 PASS không cộng vào số test của revision phần chính.
 
 Đã lặp lại hai lệnh chính thức trên cùng code/môi trường Windows: benchmark/crash JSON trùng từng byte với lần chạy trước. SHA-256 của hai file được Git lưu với newline LF lần lượt là `1a52a4311f4631feb3480e321f06686ae8bc53dfd44de574555b74fb17c330f3` và `20a61898de6b4570202221f752e05b130a83f56ed3830452e4d4de120c3f9f57`. Nội dung JSON không đổi khi chuẩn hóa CRLF/LF. Môi trường: Python 3.13.18 trong `src/.venv`, pytest 8.4.2, PyYAML 6.0.3; `.venv` không nằm trong bài nộp.
 
@@ -71,7 +66,7 @@ Chưa có kết quả hidden để đối chiếu. Mọi số liệu là public/
 
 ## 6. Tự đánh giá
 
-Đã hoàn thành phần triển khai và thực nghiệm P4: test độc lập, tích hợp ba shape, crash suite chính thức 20/20 và benchmark đủ bốn kiến trúc. Đóng góp được đối chiếu với commit kỹ thuật, test, hai JSON và bảng đóng góp trong [TEAM.md](../../TEAM.md). Kết quả hiện giới hạn ở public/test mutation, không thay thế điểm hidden hoặc chứng minh an toàn production. Phần triển khai kiến trúc của P1–P3 được ghi nhận riêng trong báo cáo nhóm.
+Đã hoàn thành phần triển khai và thực nghiệm P4: test độc lập, tích hợp ba shape, crash suite chính thức 20/20 và benchmark đủ bốn kiến trúc. Đóng góp được đối chiếu với commit kỹ thuật, test, hai JSON và dòng P4 trong [TEAM.md](../../TEAM.md). Kết quả hiện giới hạn ở public/test mutation, không thay thế điểm hidden hoặc chứng minh an toàn production.
 
 **Đối chiếu rubric, không tự quy đổi thành điểm:**
 

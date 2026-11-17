@@ -1,106 +1,95 @@
 # Báo cáo nhóm — Lab 8 LogiX-VN
 
-Báo cáo ngắn gọn theo mẫu Lab 08; số liệu đọc trực tiếp từ JSON do công cụ sinh ngày 17/11/2026.
+Tối đa 5 trang ngoài phụ lục. Số liệu lấy từ file trong `src/reports/`, không chép tay từ terminal.
 
 ## 1. Thông tin nhóm
 
-- Tên nhóm: **GroupT — L3B**.
-- Thành viên theo [TEAM.md](../../TEAM.md): Bùi Đức Tuấn (P1), Nguyễn Lê Đăng Khoa (P2), Lê Quân Bảo (P3), Mai Xuân Khang (P4).
-- Repository: [GroupT](https://github.com/buiductuan2884-max/K5-L3B-DAY08-GroupT-FromWorkflowsToAgents).
-- Commit chốt: tham chiếu [decision_adr.md](decision_adr.md). Kết quả thực nghiệm trong báo cáo được đo trên commit kỹ thuật `21768c53415405fe43f56a46adc8d34406e49faa`; báo cáo và bằng chứng được lưu tại commit `d5a8733`.
+- Tên nhóm:
+- Thành viên: xem `TEAM.md`
+- Commit chốt (trùng `report/team/decision_adr.md`):
 
 ## 2. Mục tiêu và cách tiếp cận
 
-LogiX-VN xử lý yêu cầu hoàn phí vận chuyển/hỏng hàng từ ticket. Order và policy hiện hành là nguồn sự thật; ticket là dữ liệu không đáng tin. Tiền do code tính, host kiểm approval và ghi ledger. Nhóm so bốn kiến trúc trên cùng corpus để chọn mức tự chủ ít nhất đáp ứng yêu cầu.
+Nhóm hiểu bài toán thế nào, chia việc ra sao, thứ tự làm bốn shape.
 
-P1 triển khai workflow và tích hợp hồ sơ; P2 triển khai single ReAct; P3 triển khai orchestrator/handoff; P4 kiểm ledger, policy, crash, trace/privacy, benchmark và báo cáo. Kiểm thử gồm cổng host, ma trận public, test an toàn độc lập và kiểm thử tích hợp ba shape.
+...
+
+**Phần P4 — Mai Xuân Khang:** thiết kế kiểm thử ledger, approval, crash và trace/privacy; chạy benchmark cùng corpus, seeds, pricing và evaluator; đối chiếu số liệu từ JSON để làm bằng chứng đánh giá.
 
 ## 3. Giải pháp
 
-- **Workflow:** bước Python cố định: claim view → order theo principal → quote → host. Không gọi model. Trace ghi claim ID/có order, visibility, quote, kết quả host và quyết định; không ghi ticket.
-- **Single ReAct:** `run_react(max_steps=8)`, một MockLLM call mỗi bước. Code chọn read tool theo observation, lưu kết quả rồi quyết quote/ghi tiền sau vòng lặp; không dùng model final để quyết số tiền. Trace chỉ ghi tóm tắt observation và bước ReAct.
-- **Orchestrator:** đọc claim, dựng `make_handoff`, investigator đọc order/policy/refund history/quote; orchestrator chuyển quote đầy đủ cho host. Handoff theo `ALLOWED_FIELDS`/`FACT_KEYS`, tools theo `READONLY_TOOLS`; trace ghi handoff đã sanitize và tóm tắt investigator. Order ID toàn khoảng trắng được xử lý như thiếu thông tin trước khi handoff.
-- **Swarm tham chiếu:** thêm peer/parse/draft và investigator; giữ nguyên weakness tin delay trong ticket ở seed chia hết cho 5. Đây là đối chứng, không phải mặc định kiến trúc tốt nhất.
+Mô tả ba shape nhóm viết (workflow, single, orchestrator): mỗi shape đọc gì, quyết định gì, gọi host ra sao. Chỉ rõ ranh giới code / model (tham khảo [docs/architecture.md](../../docs/architecture.md)), cách handoff được sanitize và trace ghi những event nào.
 
-Host dùng SQLite transaction cho effect và audit `refund_committed`, khóa `refund:{claim_id}`. Retry giữ một refund; amount khác gây conflict, không sửa tiền cũ. Approval phải đúng claim, còn hiệu lực và không bị thu hồi; effect bị cap bởi approved/paid và phần entitlement còn lại theo order. Shape luôn truyền quote đầy đủ: T14 proposal 150.000, lịch sử 30.000, effect 120.000. Checkpoint hỗ trợ resume, không thay ledger. Quy tắc: [contracts](../../docs/contracts.md), [business rules](../../docs/business_rules.md).
+...
+
+**Phần P4 — Kiểm chứng an toàn:** `src/tests/test_trace_safety_group.py` có 134 case: 42 độc lập và 92 tích hợp. Test dùng SQLite thật và `tmp_path`, không thay refund/approval bằng mock. Các assert đối chiếu effect, audit, checkpoint, approval, trần theo order, T13/T14 và trạng thái sau retry/crash. Trace được kiểm `run_id`, events, freshness và các sibling `<run_id>*`; quét canary, header và PII trên artifact, stdout/stderr. Handoff được đối chiếu với allowlist của host, worker bị chặn tool ghi.
 
 ## 4. Kết quả
 
-Nguồn: [benchmark.json](../../src/reports/benchmark.json). Mỗi shape 14 claim × seeds `11,22,33,44,55` = 70 trial. MockLLM, world/as_of `2026-11-15`, pricing và evaluator cố định; mỗi trial một SQLite mới. Giá mô phỏng: input 20/output 80 VND mỗi 1.000 token, tool 10 VND/call. Công thức theo [metrics](../../docs/metrics.md); bảng làm tròn khi trình bày.
+Bảng so sánh 4 shape trên bộ public (từ `src/reports/benchmark.json`): pass rate, pass^5, seed min–max, variance, cost/success, mean/p95 steps. Kèm crash safety (`src/reports/crash.json`) và, nếu có, kết quả tự kiểm trên `student_drop/`.
 
-| Shape | Pass | Pass^5 | Seed min–max | Variance | Tổng cost | Cost/success | Mean/p95 steps |
+**Phần P4 — Kết quả đo và kiểm thử.** Nguồn: [benchmark.json](../../src/reports/benchmark.json), [crash.json](../../src/reports/crash.json), code đánh giá tại `21768c53415405fe43f56a46adc8d34406e49faa`. Mỗi shape có 14 public claim × seeds `11,22,33,44,55` = 70 trial; tổng 280 trial, SQLite mới mỗi trial, cùng MockLLM, pricing và as_of `2026-11-15`. Công thức theo [metrics.md](../../docs/metrics.md).
+
+| Shape | Pass rate | Pass^5 | Seed min–max | Variance | Tổng cost | Cost/success | Mean/p95 steps |
 | --- | ---: | ---: | --- | ---: | ---: | ---: | --- |
-| workflow | 70/70 = 1 | 1 | 1–1 | 0 | 1950.00 | 27.857143 | 4.428571 / 5 |
-| single | 70/70 = 1 | 1 | 1–1 | 0 | 2309.10 | 32.987143 | 9.214286 / 10 |
-| orchestrator | 70/70 = 1 | 1 | 1–1 | 0 | 3970.40 | 56.720000 | 5.357143 / 6 |
-| swarm | 69/70 = 0.985714 | 0.928571 | 0.928571–1 | 0.000816327 | 3420.12 | 49.566957 | 2.800000 / 3 |
+| workflow | 70/70 = 1.000000 | 1.000000 | 1.000000–1.000000 | 0.000000000 | 1950.00 | 27.857143 | 4.428571 / 5 |
+| single | 70/70 = 1.000000 | 1.000000 | 1.000000–1.000000 | 0.000000000 | 2309.10 | 32.987143 | 9.214286 / 10 |
+| orchestrator | 70/70 = 1.000000 | 1.000000 | 1.000000–1.000000 | 0.000000000 | 3970.40 | 56.720000 | 5.357143 / 6 |
+| swarm | 69/70 = 0.985714 | 0.928571 | 0.928571–1.000000 | 0.000816327 | 3420.12 | 49.566957 | 2.800000 / 3 |
 
-Cost là VND mô phỏng, không phải hóa đơn API; latency `unavailable`. Mean/p95 là số event, không phải số bước vòng ReAct. ID thật: `R-workflow-C-001-s11`, `R-single-C-001-s11`, `R-orchestrator-C-001-s11`; fail duy nhất `R-swarm-C-002-s55` (`status resolved != denied`). Các ID xác định theo trial; không có batch run ID trong schema.
+Cost là VND mô phỏng, không phải hóa đơn API; latency `unavailable`. Steps là số event trong trace. Trial fail duy nhất là `R-swarm-C-002-s55` với reason `status resolved != denied`, đúng weakness được starter công bố. ID đối chiếu: `R-workflow-C-001-s11`, `R-single-C-001-s11`, `R-orchestrator-C-001-s11`.
 
-| Kiểm tra đã chạy trong src/ | Kết quả |
+| Kiểm tra P4 đã thực hiện | Kết quả |
 | --- | --- |
-| `python -m lab8.smoke` | PASS, Python 3.13.18, Windows AMD64 |
-| `python -m pytest -q` | 139 passed, 340 deselected; không failed/skipped |
-| `python -m pytest -q tests/test_trace_safety_group.py` | 42 passed, 92 deselected |
-| `python -m pytest -q tests/test_trace_safety_group.py -m student -o addopts=` | 92 passed, 42 deselected |
-| `python -m pytest -q tests/test_trace_safety_group.py -o addopts=` | 134 passed, không skipped/failed |
-| `python -m pytest -q -m student -o addopts=` | 340 passed, 139 deselected: ma trận gốc 248 + tích hợp P4 92 |
-| Ma trận gốc T01–T14 | workflow/single/orchestrator/swarm: mỗi shape 62/62; swarm có assertion xác nhận weakness cố ý |
-| `python -m lab8.crash_test --count 20 --out reports/crash.json` | [crash.json](../../src/reports/crash.json): 20/20, từng scenario passed |
-| `python -m lab8.check_submission` | Còn 1 file chưa hoàn thiện: ADR (checker đếm 7 FAIL tương ứng 7 trường); shapes, hai JSON, bảng đóng góp và research card hợp lệ |
+| Test P4 độc lập | 42 PASS |
+| Test P4 tích hợp | 92 PASS |
+| Toàn bộ test P4 | 134 PASS, không failed/skipped |
+| Cổng kiểm thử mặc định | 139 PASS |
+| Student: ma trận gốc + test tích hợp P4 | 340 PASS; ma trận gốc mỗi shape 62/62 |
+| Crash suite chính thức | 20/20 scenario PASS |
 
-Crash suite chính thức chủ yếu kiểm host (17 cửa sổ crash, conflict, thiếu approval) và một resume swarm; không tự suy crash safety cho ba shape. Test P4 bổ sung kiểm cả ba cửa sổ crash/resume/retry cho từng shape nhóm. Public và test mutation không phát hiện approval bypass, double refund hay rò secret/PII; scanner âm tính được thử bằng artifact cố ý hỏng, chỉ trong thư mục tạm. Không có `student_drop/`, chưa chạy hidden selfcheck hay nhận điểm hidden.
+Crash suite chính thức chủ yếu kiểm host/reference; kiểm thử P4 bổ sung ba cửa sổ crash/resume/retry cho từng shape nhóm. Không phát hiện approval bypass, double refund hoặc rò secret/PII trong phạm vi test P4. Public benchmark không xác nhận hidden pass rate.
 
-Đã chạy lại hai lệnh chính thức: benchmark và crash JSON giống từng byte với lần trước; checksum và môi trường ở báo cáo cá nhân P4. Hai JSON được giữ nguyên output công cụ.
-
-Lệnh benchmark tái lập:
+Lệnh tái lập trong `src/`, dùng `.venv`:
 
 ```text
+python -m pytest -q tests/test_trace_safety_group.py -o addopts=
+python -m lab8.crash_test --count 20 --out reports/crash.json
 python -m lab8.benchmark --shapes workflow,single,orchestrator,swarm --cases data/public_claims.jsonl --seeds 11,22,33,44,55 --out reports/benchmark.json
 ```
-
-Workflow có cùng pass rate với B/C, cost/success thấp nhất và variance 0 trên bộ public. Kết quả này là cơ sở cho quyết định kiến trúc trong ADR. Research card R2 phân loại fail swarm là thiếu kiểm chứng; đổi shape còn đổi prompt/lịch tool, nên không chứng minh tác động riêng của topology.
-
-**Đối chiếu độ tin cậy của thước đo — B7.** P1 bổ sung kiểm toán grader tại commit `5c338b9`, báo cáo tại `16e2e22` trên nhánh `p1-bonus-b7`. Nguồn số liệu: [bonus_grader_audit.json](https://github.com/buiductuan2884-max/K5-L3B-DAY08-GroupT-FromWorkflowsToAgents/blob/16e2e22/src/reports/bonus_grader_audit.json); [test kiểm toán](https://github.com/buiductuan2884-max/K5-L3B-DAY08-GroupT-FromWorkflowsToAgents/blob/16e2e22/src/tests/test_bonus_grader_audit.py) đã chạy riêng và đạt **40 PASS**. Đây là kết quả trên revision bonus riêng, không cộng vào 139 test của revision đánh giá phần chính.
-
-| Đối tượng kiểm toán | Kết quả từ JSON B7 |
-| --- | --- |
-| grader_a | Cost phụ thuộc thứ tự: 283.5 → 285 hoặc 286 khi đảo/xáo cùng danh sách; oracle ghi cost/success 30 thay vì 20 |
-| grader_b | 7/8 kiểm tra giữ quan hệ; kiểm tra nhân đôi làm pass^5 0.666667 → 0 do logic dùng chung |
-| grader_c | Tính trial hạ tầng vào mẫu số: graded 12 → 16, pass rate 0.75 → 0.5625; 5/8 kiểm tra giữ quan hệ |
-| lab8.metrics | 5/8 kiểm tra giữ quan hệ; trên fixture nhân đôi, pass^5 0.666667 → 0; trên fixture hạ tầng có cùng biến động với grader_c |
-
-Mỗi đối tượng có 8 quan hệ/kiểm tra; ngưỡng nghiệp vụ delay 2 ngày so với 3 ngày được kiểm riêng và đúng. Những vi phạm được test kiểm toán xác nhận là phát hiện lỗi của đối tượng được kiểm, không phải 40 test pytest thất bại. Benchmark chính có đúng một trial cho mỗi bộ (shape, claim, seed), không có `infra_error`, nên các fixture B7 không thay đổi số liệu 280 trial ở bảng trên. Host và thước đo được giữ nguyên. Báo cáo B7 và lệnh tái lập: [bonus_report.md](https://github.com/buiductuan2884-max/K5-L3B-DAY08-GroupT-FromWorkflowsToAgents/blob/16e2e22/report/team/bonus_report.md). Kết quả kiểm toán không xác nhận điều kiện hidden ≥ 0.80 để tính điểm bonus.
 
 Quyết định kiến trúc và lý do: xem `report/team/decision_adr.md`. Phiếu nghiên cứu và ablation: xem `report/team/research_card.md`.
 
 ## 5. Khó khăn và cách xử lý
 
-- **Order ID toàn khoảng trắng:** điều kiện `if not claim["order_id"]` bỏ sót chuỗi dấu cách/tab/NBSP, làm lookup thất bại rồi trả `escalated`. Tái hiện bằng `python -m pytest -q tests/test_trace_safety_group.py -m student -o addopts= -k blank_order_id --tb=short`: trước sửa 3 FAIL/18 PASS; sau sửa 21 PASS. Predicate mới trả **needs_info** và trace `has_order_id=false`; mã đơn thật không bị strip. Test ID có padding và chữ Cyrillic vẫn trả `escalated`.
-- **Phân biệt quote và effect:** T14 phải giữ proposal 150.000 trong khi ledger chỉ thêm 120.000 do đã hoàn 30.000. Test đối chiếu đồng thời proposal, ledger, lịch sử theo order và audit để phát hiện trừ hai lần hoặc trả sai contract.
-- **Tính tái lập trên Windows:** kết nối SQLite được đóng trước reopen/resume. JSON được sinh bằng lệnh lab và đối chiếu sau hai lần chạy. Khác biệt CRLF/LF được phân biệt với thay đổi nội dung JSON; môi trường là Python 3.13.18, pytest 8.4.2 và PyYAML 6.0.3 trong `.venv`.
+Lỗi gặp phải (kèm lệnh, output hoặc ảnh chụp) và cách nhóm xử lý.
+
+...
+
+**Phần P4:** test phải tách quote đầy đủ với effect sau khi trừ refund lịch sử, kiểm lại SQLite sau reopen và tránh trace cũ gây false positive. Dùng thư mục tạm riêng cho mỗi test, đóng connection trước resume và xác nhận cả ledger lẫn audit. Test hồi quy order ID toàn khoảng trắng yêu cầu `needs_info`, không handoff/refund; ID có padding hoặc ký tự giống nhau vẫn được lookup nguyên dạng và `escalated`.
 
 ## 6. Tổng hợp đóng góp
 
 Chi tiết đóng góp của từng thành viên nằm trong `TEAM.md` (bảng đóng góp) và báo cáo cá nhân `report/team/MSSV_HoTen.md`.
 
-| Vai | Bằng chứng đang có |
-| --- | --- |
-| P1 — Bùi Đức Tuấn | Workflow và `test_workflow_group.py`, commit `2ee7bb6`, `f8e9c77`; kiểm toán B7 ở `5c338b9`, báo cáo `16e2e22` |
-| P2 — Nguyễn Lê Đăng Khoa | Single, `test_single_group.py`, báo cáo cá nhân, commit `c205335`, `b5a1513` |
-| P3 — Lê Quân Bảo | Orchestrator/handoff, `test_orchestrator_group.py`, báo cáo cá nhân, commit `ada63e5` |
-| P4 — Mai Xuân Khang | `test_trace_safety_group.py` (134 case), sửa regression order ID toàn khoảng trắng, commit `21768c5`; hai JSON chính thức, research card, báo cáo nhóm và [báo cáo cá nhân](2A202603722_MaiXuanKhang.md), commit `d5a8733`; đối chiếu số liệu B7 của P1 với benchmark chính |
-
-Bảng đóng góp trong [TEAM.md](../../TEAM.md) liên kết từng thành viên với commit kỹ thuật và test tương ứng.
+| Người | Vai | Bằng chứng |
+| --- | --- | --- |
+| Mai Xuân Khang — 2A202603722 | P4 — Ledger, safety testing, evaluation và báo cáo | `test_trace_safety_group.py` (134 case), commit `21768c5`; hai JSON chính thức, research card và [báo cáo cá nhân](2A202603722_MaiXuanKhang.md), commit `d5a8733` |
 
 ## 7. Hạn chế và hướng cải thiện
 
-MockLLM không phải model sản xuất; latency `unavailable`. Public có 14 claim và nhãn đã biết, không đại diện hidden 40 × 5 hoặc production; không tuyên bố hidden ≥ 0.75. Policy/ledger host được tin cậy theo lab; triển khai thật cần kiểm quyền, concurrency nhiều process, hệ thống thanh toán, rollback/đối soát và lưu trữ bền vững bên ngoài SQLite local.
+MockLLM không phải model sản xuất; latency là `unavailable`. Nêu thêm giới hạn của nhóm và điều kiện làm kết luận thay đổi.
 
-Trace allowlist và scanner chỉ chứng minh các artifact được quan sát; không bảo đảm mọi kênh production đều sạch. Cần kiểm cả log/service/APM và lifecycle dữ liệu khi triển khai thật. Principal mâu thuẫn, thiếu order, approval hết hạn/thu hồi/mượn claim và đề nghị ngoại lệ phải hỏi thêm hoặc chuyển người có thẩm quyền; model không tự cấp approval. Kết luận public cần được đánh giá lại trên hidden hợp lệ và workload thực tế trước khi mở rộng triển khai.
+...
+
+**Phần P4:** bằng chứng giới hạn ở public/test mutation và artifact được quét. Không suy hidden PASS hoặc độ an toàn production từ kết quả này. Nghiên cứu so sánh shape có confounder về prompt/lịch tool; không chứng minh riêng tác động của topology. Scanner cần được mở rộng tới các kênh log khác khi triển khai thực tế.
 
 ## 8. Tài liệu tham khảo
 
-- [Starter chính thức](https://github.com/VinUni-AI20k/K5-Day8-From-Workflows-to-Agents), [RUBRIC](../../RUBRIC.md), [RULES](../../RULES.md), [SUBMISSION](../../SUBMISSION.md).
-- [Business rules](../../docs/business_rules.md), [contracts](../../docs/contracts.md), [architecture](../../docs/architecture.md), [metrics](../../docs/metrics.md).
-- Cemri và cộng sự (2025), [Why Do Multi-Agent LLM Systems Fail? — NeurIPS](https://proceedings.neurips.cc/paper_files/paper/2025/hash/b1041e52d3be19f0a9bc491657488e4a-Abstract-Datasets_and_Benchmarks_Track.html); thiết kế và giới hạn áp dụng: [research card](research_card.md).
+...
+
+**Tài liệu dùng cho phần P4:**
+
+- [RUBRIC](../../RUBRIC.md), [SUBMISSION](../../SUBMISSION.md), [RULES](../../RULES.md).
+- [Business rules](../../docs/business_rules.md), [contracts](../../docs/contracts.md), [metrics](../../docs/metrics.md).
+- Cemri và cộng sự (2025), [Why Do Multi-Agent LLM Systems Fail? — NeurIPS](https://proceedings.neurips.cc/paper_files/paper/2025/hash/b1041e52d3be19f0a9bc491657488e4a-Abstract-Datasets_and_Benchmarks_Track.html), sử dụng trong [research card](research_card.md).
