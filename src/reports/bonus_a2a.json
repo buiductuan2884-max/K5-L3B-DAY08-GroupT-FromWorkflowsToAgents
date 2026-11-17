@@ -1,0 +1,68 @@
+{
+  "seeds": [
+    11,
+    22,
+    33,
+    44,
+    55
+  ],
+  "variants": {
+    "orchestrator": {
+      "fault_rate": 0.0,
+      "trials": 70,
+      "pass_rate": 1.0,
+      "pass_5": 1.0,
+      "seed_variance": 0.0,
+      "cost_per_success_vnd": 56.72,
+      "mean_messages": 0.0,
+      "mean_bytes": 0.0,
+      "mean_retries": 0.0,
+      "failed_unavailable": 0,
+      "secret_leak_count": 0,
+      "approval_bypass_count": 0
+    },
+    "orchestrator_a2a": {
+      "fault_rate": 0.0,
+      "trials": 70,
+      "pass_rate": 1.0,
+      "pass_5": 1.0,
+      "seed_variance": 0.0,
+      "cost_per_success_vnd": 56.72,
+      "mean_messages": 1.8571428571428572,
+      "mean_bytes": 1510.0714285714287,
+      "mean_retries": 0.0,
+      "failed_unavailable": 0,
+      "secret_leak_count": 0,
+      "approval_bypass_count": 0
+    },
+    "orchestrator_a2a_f10": {
+      "fault_rate": 0.1,
+      "trials": 70,
+      "pass_rate": 1.0,
+      "pass_5": 1.0,
+      "seed_variance": 0.0,
+      "cost_per_success_vnd": 56.72,
+      "mean_messages": 2.1857142857142855,
+      "mean_bytes": 1622.5428571428572,
+      "mean_retries": 0.18571428571428572,
+      "failed_unavailable": 0,
+      "secret_leak_count": 0,
+      "approval_bypass_count": 0
+    },
+    "orchestrator_a2a_f30": {
+      "fault_rate": 0.3,
+      "trials": 70,
+      "pass_rate": 0.9142857142857143,
+      "pass_5": 0.6428571428571429,
+      "seed_variance": 0.006938775510204084,
+      "cost_per_success_vnd": 57.3478125,
+      "mean_messages": 2.7857142857142856,
+      "mean_bytes": 1580.4285714285713,
+      "mean_retries": 0.5571428571428572,
+      "failed_unavailable": 6,
+      "secret_leak_count": 0,
+      "approval_bypass_count": 0
+    }
+  },
+  "note": "function call baseline = 0 messages, 0 bytes; latency not modelled"
+}
