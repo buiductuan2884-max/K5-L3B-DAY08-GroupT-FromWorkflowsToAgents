@@ -1,0 +1,500 @@
+{
+  "graders": {
+    "grader_a": {
+      "duplicated_list_keeps_rates_doubles_totals": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": 0.6666666666666666,
+            "b": 0.0,
+            "expected_b": 0.6666666666666666
+          },
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": 31.5,
+            "b": 26.27777777777778,
+            "expected_b": 31.5
+          },
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": 283.5,
+            "b": 473.0,
+            "expected_b": 567.0
+          }
+        ]
+      },
+      "infra_errors_do_not_move_pass_rate": {
+        "holds": true,
+        "issues": []
+      },
+      "NEW_trial_order_does_not_matter": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": 31.5,
+            "b": 31.666666666666668,
+            "expected_b": 31.5,
+            "order": "reversed",
+            "input_size": 12
+          },
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": 283.5,
+            "b": 285.0,
+            "expected_b": 283.5,
+            "order": "reversed",
+            "input_size": 12
+          },
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": 31.5,
+            "b": 31.666666666666668,
+            "expected_b": 31.5,
+            "order": "shuffled",
+            "input_size": 12
+          },
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": 283.5,
+            "b": 285.0,
+            "expected_b": 283.5,
+            "order": "shuffled",
+            "input_size": 12
+          },
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": 31.5,
+            "b": 31.666666666666668,
+            "expected_b": 31.5,
+            "order": "reversed",
+            "input_size": 16
+          },
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": 283.5,
+            "b": 285.0,
+            "expected_b": 283.5,
+            "order": "reversed",
+            "input_size": 16
+          },
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": 31.5,
+            "b": 31.77777777777778,
+            "expected_b": 31.5,
+            "order": "shuffled",
+            "input_size": 16
+          },
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": 283.5,
+            "b": 286.0,
+            "expected_b": 283.5,
+            "order": "shuffled",
+            "input_size": 16
+          }
+        ]
+      },
+      "extra_other_shape_does_not_leak": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_flip_one_fail_to_pass": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_drop_seed_row_lowers_pass5": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_relabel_seeds_and_claims": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_oracle_docs_metrics": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": null,
+            "b": 90.0,
+            "expected_b": 60.0
+          },
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": null,
+            "b": 30.0,
+            "expected_b": 20.0
+          }
+        ]
+      }
+    },
+    "grader_b": {
+      "duplicated_list_keeps_rates_doubles_totals": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": 0.6666666666666666,
+            "b": 0.0,
+            "expected_b": 0.6666666666666666
+          }
+        ]
+      },
+      "infra_errors_do_not_move_pass_rate": {
+        "holds": true,
+        "issues": []
+      },
+      "NEW_trial_order_does_not_matter": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_other_shape_does_not_leak": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_flip_one_fail_to_pass": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_drop_seed_row_lowers_pass5": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_relabel_seeds_and_claims": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_oracle_docs_metrics": {
+        "holds": true,
+        "issues": []
+      }
+    },
+    "grader_c": {
+      "duplicated_list_keeps_rates_doubles_totals": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": 0.6666666666666666,
+            "b": 0.0,
+            "expected_b": 0.6666666666666666
+          }
+        ]
+      },
+      "infra_errors_do_not_move_pass_rate": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "pass_rate",
+            "a": 0.75,
+            "b": 0.5625,
+            "expected_b": 0.75
+          },
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": 0.6666666666666666,
+            "b": 0.5,
+            "expected_b": 0.6666666666666666
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_pass_rates",
+            "a": {
+              "11": 0.8333333333333334,
+              "22": 0.6666666666666666
+            },
+            "b": {
+              "11": 0.625,
+              "22": 0.5
+            },
+            "expected_b": {
+              "11": 0.8333333333333334,
+              "22": 0.6666666666666666
+            }
+          },
+          {
+            "shape": "workflow",
+            "key": "graded_trials",
+            "a": 12,
+            "b": 16,
+            "expected_b": 12
+          }
+        ]
+      },
+      "NEW_trial_order_does_not_matter": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_other_shape_does_not_leak": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_flip_one_fail_to_pass": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_drop_seed_row_lowers_pass5": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_relabel_seeds_and_claims": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_oracle_docs_metrics": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "graded_trials",
+            "a": null,
+            "b": 5,
+            "expected_b": 4
+          },
+          {
+            "shape": "workflow",
+            "key": "pass_rate",
+            "a": null,
+            "b": 0.6,
+            "expected_b": 0.75
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_pass_rates",
+            "a": null,
+            "b": {
+              "11": 0.3333333333333333,
+              "22": 1.0
+            },
+            "expected_b": {
+              "11": 0.5,
+              "22": 1.0
+            }
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_variance",
+            "a": null,
+            "b": 0.11111111111111112,
+            "expected_b": 0.0625
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_min",
+            "a": null,
+            "b": 0.3333333333333333,
+            "expected_b": 0.5
+          },
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": null,
+            "b": 0.3333333333333333,
+            "expected_b": 0.5
+          },
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": null,
+            "b": 65.0,
+            "expected_b": 60.0
+          },
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": null,
+            "b": 21.666666666666668,
+            "expected_b": 20.0
+          },
+          {
+            "shape": "workflow",
+            "key": "mean_steps",
+            "a": null,
+            "b": 4.2,
+            "expected_b": 5.0
+          }
+        ]
+      }
+    },
+    "lab8_metrics": {
+      "duplicated_list_keeps_rates_doubles_totals": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": 0.6666666666666666,
+            "b": 0.0,
+            "expected_b": 0.6666666666666666
+          }
+        ]
+      },
+      "infra_errors_do_not_move_pass_rate": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "pass_rate",
+            "a": 0.75,
+            "b": 0.5625,
+            "expected_b": 0.75
+          },
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": 0.6666666666666666,
+            "b": 0.5,
+            "expected_b": 0.6666666666666666
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_pass_rates",
+            "a": {
+              "11": 0.8333333333333334,
+              "22": 0.6666666666666666
+            },
+            "b": {
+              "11": 0.625,
+              "22": 0.5
+            },
+            "expected_b": {
+              "11": 0.8333333333333334,
+              "22": 0.6666666666666666
+            }
+          },
+          {
+            "shape": "workflow",
+            "key": "graded_trials",
+            "a": 12,
+            "b": 16,
+            "expected_b": 12
+          }
+        ]
+      },
+      "NEW_trial_order_does_not_matter": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_other_shape_does_not_leak": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_flip_one_fail_to_pass": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_drop_seed_row_lowers_pass5": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_relabel_seeds_and_claims": {
+        "holds": true,
+        "issues": []
+      },
+      "extra_oracle_docs_metrics": {
+        "holds": false,
+        "issues": [
+          {
+            "shape": "workflow",
+            "key": "graded_trials",
+            "a": null,
+            "b": 5,
+            "expected_b": 4
+          },
+          {
+            "shape": "workflow",
+            "key": "pass_rate",
+            "a": null,
+            "b": 0.6,
+            "expected_b": 0.75
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_pass_rates",
+            "a": null,
+            "b": {
+              "11": 0.3333333333333333,
+              "22": 1.0
+            },
+            "expected_b": {
+              "11": 0.5,
+              "22": 1.0
+            }
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_variance",
+            "a": null,
+            "b": 0.11111111111111112,
+            "expected_b": 0.0625
+          },
+          {
+            "shape": "workflow",
+            "key": "seed_min",
+            "a": null,
+            "b": 0.3333333333333333,
+            "expected_b": 0.5
+          },
+          {
+            "shape": "workflow",
+            "key": "pass_5",
+            "a": null,
+            "b": 0.3333333333333333,
+            "expected_b": 0.5
+          },
+          {
+            "shape": "workflow",
+            "key": "total_simulated_cost_vnd",
+            "a": null,
+            "b": 65.0,
+            "expected_b": 60.0
+          },
+          {
+            "shape": "workflow",
+            "key": "cost_per_success_vnd",
+            "a": null,
+            "b": 21.666666666666668,
+            "expected_b": 20.0
+          },
+          {
+            "shape": "workflow",
+            "key": "mean_steps",
+            "a": null,
+            "b": 4.2,
+            "expected_b": 5.0
+          }
+        ]
+      }
+    }
+  },
+  "delay_days_2_vs_3": {
+    "holds": true,
+    "issues": []
+  },
+  "verdicts": {
+    "grader_a": "Bo trial ha tang dung, nhung cong them mot lan cost cua trial graded DAU TIEN gap o moi claim (+tong cost dau tien theo claim): chi phi phu thuoc thu tu trial va khong gap doi khi nhan doi danh sach. Thua huong loi pass_5 cua lab8.metrics.",
+    "grader_b": "Khong co loi rieng tren cac quan he da viet. Thua huong loi pass_5 cua lab8.metrics khi mot cap (claim, seed) lap lai.",
+    "grader_c": "Tinh trial ha tang la FAIL va dua vao mau so (graded 12 -> 16, pass_rate 0.75 -> 0.5625). Thua huong loi pass_5 cua lab8.metrics.",
+    "lab8_metrics": "Ban goc khong biet infra_error: trial passed=False nao cung bi cham. pass_5 dem so dong (len(claim_rows) == len(seeds)) thay vi so seed da phu, nen sai khi (claim, seed) lap lai."
+  }
+}
