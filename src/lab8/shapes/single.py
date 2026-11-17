@@ -117,7 +117,7 @@ def _run(conn: sqlite3.Connection, claim_id: str, *, seed: int, crash_at: str | 
     claim = mem.get("claim") or {}
     if not claim.get("found"):
         return done("failed", reason="unknown_claim")
-    if not claim.get("order_id"):
+    if not _has_order_id(claim):
         # Do not pull an order id out of the ticket text.
         return done("needs_info", reason="missing_order_id")
     order_view = mem.get("order_view") or {}
@@ -151,7 +151,7 @@ def _next_action(claim_id: str, mem: dict[str, Any]) -> dict[str, Any]:
         return {"tool": "get_claim_view", "args": {"claim_id": claim_id}}
     if not claim["found"]:
         return {"final": {"status": "failed"}}
-    if not claim["order_id"]:
+    if not _has_order_id(claim):
         return {"final": {"status": "needs_info"}}
     order_view = mem.get("order_view")
     if order_view is None:
@@ -168,6 +168,15 @@ def _next_action(claim_id: str, mem: dict[str, Any]) -> dict[str, Any]:
     return {"final": {"status": "propose"}}
 
 
+def _has_order_id(claim: dict[str, Any]) -> bool:
+    """Blank or whitespace-only counts as missing (same rule as workflow).
+
+    The id itself is never stripped or normalized: lookup_order and the host read it raw,
+    so a homoglyph or padded id must stay unknown and escalate.
+    """
+    return bool((claim.get("order_id") or "").strip())
+
+
 def _remember(mem: dict[str, Any], tool: str, result: dict[str, Any], trace: Trace) -> None:
     """Store a tool result in agent memory and trace a redacted summary of it."""
     if tool == "get_claim_view":
@@ -178,7 +187,7 @@ def _remember(mem: dict[str, Any], tool: str, result: dict[str, Any], trace: Tra
             "ticket": result.get("ticket") or "",
         }
         # The ticket and principal are not traced: ticket text is untrusted user data.
-        trace.add("observe", {"tool": tool, "found": mem["claim"]["found"], "has_order_id": bool(result.get("order_id"))})
+        trace.add("observe", {"tool": tool, "found": mem["claim"]["found"], "has_order_id": _has_order_id(mem["claim"])})
     elif tool == "lookup_order":
         mem["order_view"] = result
         # lookup_order already drops phone, address, internal note and item name.

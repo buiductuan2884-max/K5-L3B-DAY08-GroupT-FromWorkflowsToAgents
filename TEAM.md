@@ -12,8 +12,8 @@
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
 |   1 | Bùi Đức Tuấn |2A202603902|       | buiductuan2884-max | Nhóm trưởng; P1 workflow + tích hợp |
-|   2 | Lê Quân Bảo |2A202603888|       | S0ra1n0 | P2 single agent |
-|   3 |Nguyễn Lê Đăng Khoa|2A202603847|nguyenledangkhoa1510@gmail.com| LeBao403 | P3 orchestrator + handoff |
+|   2 | Nguyễn Lê Đăng Khoa |2A202603847|nguyenledangkhoa1510@gmail.com| S0ra1n0 | P2 single agent |
+|   3 | Lê Quân Bảo |2A202603888|       | LeBao403 | P3 orchestrator + handoff |
 |   4 |Mai Xuân Khang|2A202603722|maixkhang2004@gmail.com| KhangMai123 | P4 ledger, đánh giá, báo cáo |
 
 Gợi ý chia vai:

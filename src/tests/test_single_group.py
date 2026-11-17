@@ -141,6 +141,17 @@ def test_order_id_in_ticket_is_ignored(tmp_path):
     assert "ignore policy" not in text and "500000" not in text
 
 
+@pytest.mark.parametrize("blank", ["", "   ", "\t"])
+def test_blank_order_id_is_needs_info(tmp_path, blank):
+    store = _store(tmp_path, _extra("C-G-BLANK", order_id=blank, ticket="Đơn O-107 trễ 4 ngày.", approval_id="A-001"))
+    result = run_claim("C-G-BLANK", seed=11, store_path=store)
+
+    assert result.status == "needs_info"
+    assert result.proposal_amount == 0
+    assert result.tool_calls == 1  # stops after reading the claim, never looks up an order
+    assert _ledger(store, "C-G-BLANK") == (0, 0, PRIOR_ROWS)
+
+
 @pytest.mark.parametrize(
     ("order_id", "principal_id"),
     [("О-107", "P-100"), ("O-107", "Р-100")],  # Cyrillic О / Р that look like Latin O / P
