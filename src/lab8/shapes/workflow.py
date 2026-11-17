@@ -81,7 +81,8 @@ def _run(conn: sqlite3.Connection, claim_id: str, *, seed: int, crash_at: str | 
     trace.add("claim", {"claim_id": claim_id, "has_order_id": bool(claim["order_id"])})
 
     # 2. No order id on the claim row -> ask, even if the ticket mentions one.
-    if not claim["order_id"]:
+    # Blank-only counts as missing; the id itself is not normalized because the host looks it up raw.
+    if not (claim["order_id"] or "").strip():
         return done("needs_info", reason="missing_order_id")
 
     # 3. Order, scoped to the claim's principal.
