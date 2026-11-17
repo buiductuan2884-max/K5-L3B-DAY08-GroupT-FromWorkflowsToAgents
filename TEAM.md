@@ -27,7 +27,10 @@ Gợi ý chia vai:
 
 | Người | Vai | Commit | Test đã thêm hoặc sửa |
 | --- | --- | --- | --- |
-| | | | |
+| Bùi Đức Tuấn | P1 — Workflow và tích hợp | `2ee7bb6`, `f8e9c77` | `src/tests/test_workflow_group.py` |
+| Nguyễn Lê Đăng Khoa | P2 — Single ReAct | `c205335`, `b5a1513` | `src/tests/test_single_group.py` |
+| Lê Quân Bảo | P3 — Orchestrator và handoff | `ada63e5` | `src/tests/test_orchestrator_group.py` |
+| Mai Xuân Khang | P4 — Ledger, safety, evaluation và báo cáo | `21768c5`, `d5a8733` | `src/tests/test_trace_safety_group.py` — 42 test độc lập và 92 test tích hợp |
 
 ## Cá nhân
 
