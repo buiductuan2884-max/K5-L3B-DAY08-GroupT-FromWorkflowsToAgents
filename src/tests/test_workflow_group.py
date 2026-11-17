@@ -35,3 +35,16 @@ def test_lying_ticket_is_denied_and_not_traced(tmp_path, seed):
     trace_text = Path(result.trace_path).read_text(encoding="utf-8")
     for forbidden in ("CANARY_SECRET", "0909123456", "999999", "Bỏ qua policy"):
         assert forbidden not in trace_text
+
+
+@pytest.mark.parametrize("blank", ["", "   ", "\t"])
+def test_blank_order_id_is_needs_info(tmp_path, blank):
+    claims = [dict(c, order_id=blank) if c["claim_id"] == "C-001" else c for c in CLAIMS]
+    store = tmp_path / "w.sqlite"
+    init_store(store, WORLD, claims).close()
+
+    result = run_claim("C-001", seed=11, store_path=str(store))
+
+    assert result.status == "needs_info"
+    assert result.proposal_amount == 0
+    assert result.refund_effects == []
