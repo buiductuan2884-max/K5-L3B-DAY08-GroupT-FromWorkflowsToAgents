@@ -73,4 +73,14 @@ P2: shape B `single`, một agent ReAct có giới hạn 8 bước.
 
 ## 6. Tự đánh giá
 
-...
+**Đã làm tốt**
+
+- Shape single đạt 62/62 test student, kết quả giống nhau trên cả 5 seed.
+- Model chỉ chọn tool đọc, code quyết định kết quả và ghi tiền, truyền quote đầy đủ cho host.
+- Viết 19 test cho các ca bộ public chưa phủ (crash, approval mượn, injection, homoglyph, giới hạn 8 bước).
+
+**Chưa tốt → Bài học**
+
+- Bản đầu bỏ sót `order_id` chỉ có khoảng trắng, phải sửa sau khi đối chiếu với workflow → thống nhất các ca biên với cả nhóm ngay từ đầu.
+- Single tốn thêm model call mà chưa chắc pass nhiều hơn workflow → mức tự chủ cao hơn phải được chứng minh bằng số liệu benchmark, không mặc định là tốt hơn.
+- Chưa tự kiểm trên bộ hidden (`student_drop/`) → chạy tự kiểm hidden trước khi chốt code.

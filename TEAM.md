@@ -28,7 +28,7 @@ Gợi ý chia vai:
 | Người | Vai | Commit | Test đã thêm hoặc sửa |
 | --- | --- | --- | --- |
 | Bùi Đức Tuấn | P1 — Workflow, tích hợp và bonus | `2ee7bb6`, `f8e9c77` (workflow); `5c338b9`, `16e2e22` (bonus B7); `5bfb01b` (bonus B6) | `src/tests/test_workflow_group.py`, `src/tests/test_bonus_grader_audit.py`, `src/tests/test_bonus_a2a.py` |
-| Nguyễn Lê Đăng Khoa | P2 — Single ReAct | `c205335`, `b5a1513` | `src/tests/test_single_group.py` |
+| Nguyễn Lê Đăng Khoa | P2 — Single ReAct | `c205335`, `b5a1513` | `src/tests/test_single_group.py` (19 test) |
 | Lê Quân Bảo | P3 — Orchestrator và handoff | `ada63e5`, `34daeb2` | `src/tests/test_orchestrator_group.py` |
 | Mai Xuân Khang | P4 — Ledger, safety, evaluation và báo cáo | `21768c5`, `d5a8733` | `src/tests/test_trace_safety_group.py` — 42 test độc lập và 92 test tích hợp |
 
@@ -102,3 +102,27 @@ Sao chép mục dưới đây cho từng thành viên.
 - `python -m pytest -q tests/test_orchestrator_group.py`: 26 passed.
 - `python -m pytest -q`: 107 passed.
 - Chi tiết: `report/team/2A202603888_LeQuanBao.md`.
+
+## 2A202603847_NguyenLeDangKhoa
+
+### Phần việc phụ trách
+
+- Shape B (single agent ReAct, tối đa 8 bước): file `src/lab8/shapes/single.py`.
+- Test riêng của shape: `src/tests/test_single_group.py`.
+- Báo cáo cá nhân: `report/team/2A202603847_NguyenLeDangKhoa.md`.
+
+### Đóng góp cụ thể
+
+- Cài vòng ReAct qua `run_react`: `decide()` chỉ chọn tool đọc (`get_claim_view` → `lookup_order` → `compute_compensation`), mỗi bước một lần gọi MockLLM để chi phí được tính.
+- Sau vòng lặp, code của shape quyết định kết quả dựa trên kết quả tool, không dựa trên câu trả lời của model. Shape là nơi duy nhất gọi `durability.issue_refund`, truyền quote đầy đủ và `crash_at`, không nuốt `InjectedCrash`.
+- Không dùng số trong ticket; `order_id` rỗng hoặc chỉ khoảng trắng ra `needs_info`; không chuẩn hoá id nên homoglyph ra `escalated`. Trace không ghi ticket, principal, secret hay PII.
+- Thêm 19 test: host nhận quote đầy đủ (T14), crash ở cả 3 điểm rồi resume, approval mượn của claim khác, injection, `order_id` trống, homoglyph, kết quả giống nhau trên 5 seed, trace sạch, model xin tool ghi bị chặn, dừng ở 8 bước.
+
+### Bằng chứng
+
+- Commit: c205335 (PR #3), b5a1513.
+- `python -m pytest -q -m student -o addopts= -k "single and not workflow and not orchestrator and not swarm"`: 62 passed.
+- `python -m pytest -q tests/test_single_group.py`: 19 passed.
+- `python -m pytest -q`: 97 passed.
+- `python -m lab8.check_submission`: `shape single: format đúng, 12/12 claim public pass ở seed 11`.
+- Chi tiết: `report/team/2A202603847_NguyenLeDangKhoa.md`.
