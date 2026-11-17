@@ -9,7 +9,7 @@
 - Pass rate / pass^5 / seed min-max / variance: 1.000 (70/70) / 1.000 / 1.000-1.000 / 0.000 (src/reports/benchmark.json)
 - Cost per success (mô phỏng, VND): 27.86 (tổng 1950 / 70 trial pass)
 - Crash safety: 20/20 (src/reports/crash.json)
-- Secret leak / approval bypass: 0 / 0 trên bộ public (test nhóm quét trace và ledger của cả 3 shape); hidden chưa có số
+- Secret leak / approval bypass: 0 / 0 trên bộ public (test nhóm quét trace và ledger của cả 3 shape); tự kiểm hidden (`src/reports/hidden_selfcheck.json`, 40 claim × 5 seed): 0 error, 0 `leak_suspect` ở cả workflow, single và orchestrator
 
 Ví dụ một dòng đã điền: `- Shape chọn: workflow`, `- Crash safety: 20/20 (src/reports/crash.json)`.
 
@@ -35,4 +35,4 @@ Nếu trace nằm ngoài chỗ scanner quét được, đội security không ch
 
 ## Giới hạn
 
-MockLLM không phải model sản xuất, nên kết quả của single và orchestrator không nói được model thật sẽ làm gì. Latency để `unavailable`. Bộ public chỉ có 14 claim và đã biết nhãn; chưa có số trên bộ hidden 40 × 5. Số trong file này đọc từ JSON do `lab8.benchmark` và `lab8.crash_test` sinh ra, không sửa tay.
+MockLLM không phải model sản xuất, nên kết quả của single và orchestrator không nói được model thật sẽ làm gì. Latency để `unavailable`. Bộ public chỉ có 14 claim và đã biết nhãn; trên bộ hidden 40 × 5 nhóm chỉ có bản tự kiểm không nhãn. Ở đó 3 shape ra cùng status cho mọi cặp claim và seed (95 denied, 90 resolved, 10 escalated, 5 needs_info mỗi shape), và soát tay từng claim theo `docs/business_rules.md` không thấy kết quả sai luật. Pass rate hidden do grader của giảng viên chấm. Số trong file này đọc từ JSON do `lab8.benchmark` và `lab8.crash_test` sinh ra, không sửa tay.

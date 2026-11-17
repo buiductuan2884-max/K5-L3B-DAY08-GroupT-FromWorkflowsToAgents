@@ -61,6 +61,7 @@ P1: nhóm trưởng, shape A `workflow` và bonus.
 | `python -m pytest -q tests/test_bonus_grader_audit.py` | 40 passed |
 | `python -m pytest -q tests/test_bonus_a2a.py` | 11 passed |
 | `python -m lab8.crash_test --count 20 --out reports/crash.json` | `crash_safety 20/20` |
+| `python -m lab8.benchmark --shapes workflow,single,orchestrator --cases student_drop/hidden_claims.jsonl --world student_drop/hidden_world_state.json --out reports/hidden_selfcheck.json` | 600 trial, 0 error, 0 `leak_suspect` |
 
 - **Benchmark:** chạy lại trên commit `161f109` ra `reports/benchmark.json` giống hệt file P4 đã nộp. Workflow 70/70, ví dụ `R-workflow-C-002-s55` ra `denied` đúng, trong khi `R-swarm-C-002-s55` ra `resolved`.
 - **Soát kiểu hidden:** 20 tình huống, gồm ticket lừa, chữ Cyrillic giả chữ O, đơn của khách khác, approval mượn, hết hạn, bị thu hồi, đơn hủy, hỏng hàng và 3 điểm crash. Kết quả 20/20 sau khi sửa `order_id` toàn khoảng trắng; không lần nào trace lộ SĐT, địa chỉ hay secret.
@@ -91,7 +92,7 @@ P1: nhóm trưởng, shape A `workflow` và bonus.
 
 **Hạn chế và điều chưa kiểm chứng**
 
-- Chưa chạy được bộ hidden (`student_drop/`), nên chưa biết workflow có đạt 0.75 và 0.80 hay không.
+- Bộ hidden (`student_drop/`) không có nhãn, nên tự kiểm chỉ cho biết 0 error và 0 nghi lộ secret, chưa cho pass rate. Tôi soát tay 40 claim theo luật và không thấy sai, nhưng có đạt 0.75 và 0.80 hay không vẫn phải chờ grader của giảng viên.
 - `check_submission` chỉ nhận tiêu đề bonus từ B1 đến B6, trong khi đề có B7, nên báo cáo B7 bị báo FAIL. Điểm này cần coach xác nhận.
 - Phần lớn code B6 do AI viết; tôi kiểm bằng test và số liệu, chưa tự đọc hết từng dòng.
 
