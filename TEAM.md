@@ -125,4 +125,5 @@ Sao chép mục dưới đây cho từng thành viên.
 - `python -m pytest -q tests/test_single_group.py`: 19 passed.
 - `python -m pytest -q`: 97 passed.
 - `python -m lab8.check_submission`: `shape single: format đúng, 12/12 claim public pass ở seed 11`.
+- Tự kiểm hidden `python -m lab8.benchmark --shapes single --cases student_drop/hidden_claims.jsonl --world student_drop/hidden_world_state.json`: 200 trial, 0 error, 0 `leak_suspect`, status trùng workflow và orchestrator ở mọi cặp (claim, seed).
 - Chi tiết: `report/team/2A202603847_NguyenLeDangKhoa.md`.

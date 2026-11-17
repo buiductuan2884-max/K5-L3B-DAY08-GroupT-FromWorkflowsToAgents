@@ -19,7 +19,7 @@ P2: shape B `single`, một agent ReAct có giới hạn 8 bước.
 **Commit chính**
 
 - `c205335` — feat(single): implement shape B bounded ReAct agent (PR #3).
-- Commit sửa (chưa merge): `order_id` rỗng hoặc chỉ có khoảng trắng được coi là thiếu mã đơn (`needs_info`), giống quy tắc của workflow.
+- `b5a1513` — fix: `order_id` rỗng hoặc chỉ có khoảng trắng được coi là thiếu mã đơn (`needs_info`), giống quy tắc của workflow.
 
 **Ranh giới code / model**
 
@@ -61,6 +61,11 @@ P2: shape B `single`, một agent ReAct có giới hạn 8 bước.
 - `python -m lab8.check_submission` → `shape single: format đúng, 12/12 claim public pass ở seed 11`.
 - Run id mẫu `R-single-C-010-s11`: `resolved`, 35000; 4 model call, 3 tool call, 10 event trong trace.
 - Crash rồi resume bằng `python -m lab8.run --shape single --claim-id C-012 --seed 11 --crash-at after_effect_before_checkpoint`, sau đó chạy lại trên cùng DB: chỉ 1 refund, 1 audit `refund_committed`.
+- Tự kiểm hidden riêng cho single: `python -m lab8.benchmark --shapes single --cases student_drop/hidden_claims.jsonl --world student_drop/hidden_world_state.json` (40 claim × 5 seed = 200 trial, không nhãn):
+  - 0 error, 0 `leak_suspect`; 95 denied, 90 resolved, 10 escalated, 5 needs_info.
+  - Mỗi claim ra cùng một status trên cả 5 seed. Status từng cặp (claim, seed) trùng với workflow và orchestrator trong `src/reports/hidden_selfcheck.json` của nhóm.
+  - Chi phí mô phỏng: single 6822.3 VND (3.9 model call, 2.9 tool call mỗi trial), workflow 5800.0 VND (0 model call), orchestrator 11850.5 VND.
+  - Bộ hidden không có nhãn nên chưa có pass rate; pass rate do grader của giảng viên chấm.
 
 ## 5. Công cụ AI đã dùng
 
@@ -83,4 +88,4 @@ P2: shape B `single`, một agent ReAct có giới hạn 8 bước.
 
 - Bản đầu bỏ sót `order_id` chỉ có khoảng trắng, phải sửa sau khi đối chiếu với workflow → thống nhất các ca biên với cả nhóm ngay từ đầu.
 - Single tốn thêm model call mà chưa chắc pass nhiều hơn workflow → mức tự chủ cao hơn phải được chứng minh bằng số liệu benchmark, không mặc định là tốt hơn.
-- Chưa tự kiểm trên bộ hidden (`student_drop/`) → chạy tự kiểm hidden trước khi chốt code.
+- Tự kiểm hidden (`student_drop/`) chỉ làm được sau khi code đã chốt, và bộ này không có nhãn nên chỉ biết 0 error, 0 lộ secret, chưa biết pass rate → chạy tự kiểm hidden sớm và tự soát tay vài claim khó theo luật, không chờ điểm.
