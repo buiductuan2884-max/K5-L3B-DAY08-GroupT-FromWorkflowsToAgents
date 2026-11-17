@@ -13,7 +13,7 @@
 | --: | ------ | ---- | ----- | ------ | ------- |
 |   1 | Bùi Đức Tuấn |2A202603902|       | buiductuan2884-max | Nhóm trưởng; P1 workflow + tích hợp |
 |   2 | Nguyễn Lê Đăng Khoa |2A202603847|nguyenledangkhoa1510@gmail.com| S0ra1n0 | P2 single agent |
-|   3 | Lê Quân Bảo |2A202603888|       | LeBao403 | P3 orchestrator + handoff |
+|   3 | Lê Quân Bảo | 2A202603888 |       | LeBao403 | P3 orchestrator + handoff |
 |   4 |Mai Xuân Khang|2A202603722|maixkhang2004@gmail.com| KhangMai123 | P4 ledger, đánh giá, báo cáo |
 
 Gợi ý chia vai:
@@ -41,13 +41,13 @@ Ví dụ: `report/team/20241234_NguyenVanAn.md`.
 
 Sao chép mục dưới đây cho từng thành viên.
 
-## 2A20260388_LeQuanBao
+## 2A202603888_LeQuanBao
 
 ### Phần việc phụ trách
 
 - Shape C (orchestrator) và handoff: file `src/lab8/shapes/orchestrator.py`.
 - Test riêng của shape: `src/tests/test_orchestrator_group.py`.
-- Báo cáo cá nhân: `report/team/2A20260388_LeQuanBao.md`.
+- Báo cáo cá nhân: `report/team/2A202603888_LeQuanBao.md`.
 
 ### Đóng góp cụ thể
 
@@ -59,8 +59,8 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Bằng chứng
 
-- Commit: ada63e5
+- Commit: `ada63e5` (cài shape C và test), `34daeb2` (xử lý `order_id` toàn khoảng trắng).
 - `python -m pytest -q -m student -o addopts= -k orchestrator`: 62 passed.
 - `python -m pytest -q tests/test_orchestrator_group.py`: 26 passed.
 - `python -m pytest -q`: 107 passed.
-- Chi tiết: `report/team/2A20260388_LeQuanBao.md`.
+- Chi tiết: `report/team/2A202603888_LeQuanBao.md`.
